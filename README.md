@@ -139,17 +139,19 @@ var mymutex *semaphore.Mutex
 ```
 
 #### Createsem: creates a counter semaphore
+_func Createsem(name string, capacity int, initialcount int) *Sem_
 
 To create a semaphore with a capacity of 64, and an initial count of 0:
 ```go
-mysem := sem.Createsem("mySemaphore-1", 64, 0)
+mysem := sem.Createsem("mySemaphore", 64, 0)
 ```
 -or- to create a semaphore with a capacity of 64, and an initial count of 64:
 ```go
-mysem := sem.Createsem("mySemaphore-2", 64, 64)
+mysem := sem.Createsem("mySemaphore", 64, 64)
 ```
 
 #### Createmutex: creates a mutex  
+_func Createmutex(name string) *Mutex_
 ```go
 mymutex := sem.Createmutex("myMutex")
 ```
@@ -157,10 +159,13 @@ mymutex := sem.Createmutex("myMutex")
 Following a semaphore creation, there are a certain number of methods available to manipulate semaphores:
 
 #### Reset
+_func (s *Sem) Reset()_
 ```go
 mysem.Reset()
 ```
--or-
+-or- for a mutex
+
+_func (m *Mutex) Reset()_
 ```go
 mymutex.Reset()
 ```
@@ -168,28 +173,39 @@ mymutex.Reset()
 This will flush the semaphore internal channel and resets its counter to its original value.
 
 #### Signal -or- V (-or- Leave)
+_func (s *Sem) Signal()_
 ```go
 mysem.Signal()
 ```
 -or-
+
+_func (s *Sem) V()_
 ```go
 mysem.V()
 ```
 -or- for a mutex
+
+_func (m *Mutex) Leave()_
 ```go
 mymutex.Leave()
 ```
+
 <b>Signal</b> and <b>V</b> accomplish the same thing which is to increase by 1 the level of availability of the resource. <b>Leave</b> is identical but reserved for <i>mutex</i>.
 
 #### Wait -or- P (-or- Enter)
+_func (s *Sem) Wait()_
 ```go
 mysem.Wait()
 ```
 -or-
+
+_func (s *Sem) P()_
 ```go
 mysem.P()
 ```
 -or- for a mutex
+
+_func (m *Mutex) Enter()_
 ```go
 mymutex.Enter()
 ```
