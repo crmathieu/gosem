@@ -1,7 +1,7 @@
 # gosem
 A semaphore implementation in golang with examples
 
-Semaphores are tools that help manage concurrent accesses to a common resource (usually a buffer or a more complex data structure). In order to achieve this, a semaphore has a counter that indicates the level of availability the resource has at a given time.
+Semaphores are tools that help manage concurrent accesses to a common resource (usually a buffer or a set of indexes or pointers used to manipulate the buffer's data). In order to achieve this, a semaphore has a counter that indicates the level of availability the resource has at a given time.
 
 A semaphore is a data structure using a channel as a mean to implement goroutine synchronization. The channel has a dimension (its capacity) that corresponds to the dimension of the sharable resource, and an initial count corresponding to its initial availability.
 
