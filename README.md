@@ -117,15 +117,6 @@ func consumer() {
   }
 }
 ```
-### Variable declaration
-To declare a semaphore or a mutex:
-```go
-var mysem *semaphore.Sem
-```
--or-
-```go
-var mymutex *semaphore.Mutex
-```
 
 ### Semaphore API
 
@@ -135,6 +126,16 @@ First, import the gosem package:
 import (
   sem "github.com/crmathieu/gosem/semaphore"
 )
+```
+
+#### Variable declaration
+To declare a semaphore or a mutex:
+```go
+var mysem *semaphore.Sem
+```
+-or-
+```go
+var mymutex *semaphore.Mutex
 ```
 
 #### Createsem: creates a counter semaphore
