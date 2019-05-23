@@ -49,7 +49,7 @@ func producer() {
   }
 }
 ```
-In its loop, the **producer** first makes sure there is available space in the buffer by calling _writesem.Wait()_. This call will return immediately if space is available but will block if the buffer is full. In the latter case, the call will return only after the **consumer** goroutine reads an entry from the buffer and performs a _writesem.Signal()_ call to signify that one entry is now available.
+In its loop, the **producer** first makes sure there is available space in the buffer by calling _writesem.Wait()_. This call will return immediately if space is available but will block if the buffer is full. In the latter case, the call will return only after the **consumer** goroutine reads an entry from the buffer and performs a _writesem.Signal()_ call to indicate that one entry is now available.
 
 Similarly, once a value was written in the buffer, the **producer** calls _readsem.Signal()_ to indicate to the consumer that a value is available for consumption.
 
