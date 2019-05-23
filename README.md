@@ -3,7 +3,7 @@ go semaphore implementation with examples
 
 Semaphores are tools that help manage concurrent accesses to a common resource (usually a buffer or a more complex data structure). In order to achieve this, a semaphore has a counter that indicates the level of availability the resource has at a given time.
 
-In the context of golang, a semaphore is a data structure using a channel as a mean to implement goroutine synchronization. The channel has a dimension (its capacity) that corresponds to the dimension of the sharable resource, and an initial count corresponding to its initial availability.
+A semaphore is a data structure using a channel as a mean to implement goroutine synchronization. The channel has a dimension (its capacity) that corresponds to the dimension of the sharable resource, and an initial count corresponding to its initial availability.
 
 Imagine we want to share a buffer of 512 integers between 1 producer and 1 consumer. The producer wants to write to the buffer and the consumer wants to read from it.
 
@@ -15,13 +15,21 @@ var tail, head int = 0, 0
 In order to protect this buffer and synchronize read and write operations, we are going to need 2 semaphores: one for reads and one for writes. The read semaphore is used to find out if there is anything to read from the buffer. The write semaphore is used to find out if there is any space available in the buffer so that we can write into it.
 
 ```go
-readsem =  Csem("readsem",  512, 0)
-writesem = Csem("writesem", 512, 512)
+readsem =  Createsem("readsem",  512, 0)
+writesem = Createsem("writesem", 512, 512)
 ```
 
 Note that both readsem and writesem have the same dimension: 512, but readsem has an initial value of 0 (because initially there is nothing to read) and writesem has an initial value of 512 (because initially the whole buffer is available).
 
+you may also use the _CreateReadSemaphore_ or _CreateWriteSemaphore_ that will abstract the initial value given to the semaphore:
+
+```go
+readsem =  CreateReadSemaphore("readsem",   512)
+writesem = CreateWriteSemaphore("writesem", 512)
+```
+
 The code of the producer looks like this:
+
 ```go
 func producer() {
   i := 0
@@ -39,6 +47,7 @@ In its producing loop, the producer first makes sure there is space in the buffe
 Similarly, once a value was written in the buffer, the producer calls readsem.Signal() to indicate to the consumer that a value is available for consumption.
 
 The code of the consumer looks like that:
+
 ```go
 func consumer() {
   for {
@@ -49,6 +58,7 @@ func consumer() {
   }
 }
 ```
+
 In its consuming loop, the consumer first makes sure there is something to read from the buffer by calling readsem.Wait(). This call will return immediately if data is available but will block if the buffer is empty. In the latter case, the call will return only after a producer goroutine writes an entry to the buffer and performs a readsem.Signal() call to signify that one entry is now available for reading.
 
 Similarly, once a value has been read from the buffer, the consumer calls writesem.Signal() to indicate to the producer that there is space available.
@@ -60,13 +70,13 @@ If we want to synchronize several consumers and producers accessing the same buf
 In order to do that, goroutines will need to have an exclusive access to these indexes when they update them. This is accomplished with the use of <b>mutex semaphores</b>. A mutex semaphore is like a normal semaphore with a capacity and an initial count of 1:
 
 ```go
-mutex = Cmutex("mymutex")
+mutex = Createmutex("mymutex")
 ```
 We are going to need a mutex to protect the <b>head</b> index and another mutex to protect the <b>tail</b> index:
 
 ```go
-headmutex = Cmutex("head-mutex")
-tailmutex = Cmutex("tail-mutex")
+headmutex = Createmutex("head-mutex")
+tailmutex = Createmutex("tail-mutex")
 ```
 
 The producer code becomes:
@@ -108,20 +118,20 @@ var mymutex *semaphore.Mutex
 
 ### Semaphore API
 
-#### Csem: creates a counter semaphore
+#### Createsem: creates a counter semaphore
 
 To create a semaphore with a capacity of 64, and an initial count of 0:
 ```go
-sem1 = semaphore.Csem("mySemaphore-1", 64, 0)
+sem1 = semaphore.Createsem("mySemaphore-1", 64, 0)
 ```
 -or- to create a semaphore with a capacity of 64, and an initial count of 64:
 ```go
-sem2 = semaphore.Csem("mySemaphore-2", 64, 64)
+sem2 = semaphore.Createsem("mySemaphore-2", 64, 64)
 ```
 
-#### Cmutex: creates a mutex  
+#### Createmutex: creates a mutex  
 ```go
-mutex = semaphore.Cmutex("myMutex")
+mutex = semaphore.Createmutex("myMutex")
 ```
 
 Following a semaphore creation, there are a certain number of methods available to manipulate semaphores:
@@ -160,6 +170,7 @@ sem.Wait()
 
 sem.P()
 ```
+
 -or- for a mutex
 
 ```go

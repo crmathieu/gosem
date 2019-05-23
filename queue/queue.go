@@ -94,3 +94,5 @@ func (q *QU) Fanout(item int) {
     q.consmap[k].SemR.Signal()
   }
 }
+
+//

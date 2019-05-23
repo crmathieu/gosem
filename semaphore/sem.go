@@ -5,34 +5,31 @@ type Sem struct {
   sch chan int
   ic int
   valid bool
-<<<<<<< HEAD
 }
 
 type Mutex struct {
   s *Sem
 }
 
-// Cmutex----------------------------------------------------------------------
-//         creates a mutex
+// CreateReadSemaphore --------------------------------------------------------
+// will set up a semaphore with an initial count of 0
 // ----------------------------------------------------------------------------
-func Cmutex(name string) *Mutex {
-  m := &Mutex{
-    s: Csem(name, 1, 1),
-  }  
-  return m
-=======
+func CreateReadSemaphore(name string, capacity int) *Sem {
+  return Createsem(name, capacity, 0)
 }
 
-type Mutex struct {
-  s *Sem
->>>>>>> 1ef29cbbc4cb55336c700fcf2b5a69b3ae322f1b
+// CreateWriteSemaphore --------------------------------------------------------
+// will set up a semaphore with an initial count corresponding to its capacity
+// ----------------------------------------------------------------------------
+func CreateWriteSemaphore(name string, capacity int) *Sem {
+  return Createsem(name, capacity, capacity)
 }
 
-// Csem------------------------------------------------------------------------
+// Createsem ------------------------------------------------------------------
 // creates a semaphore with an initial count (ic) >= 0. The initial count must
 // lower or equal to the semaphore capacity
 // ----------------------------------------------------------------------------
-func Csem(name string, capacity int, ic int) *Sem {
+func Createsem(name string, capacity int, ic int) *Sem {
 
   if capacity <= 0 {
     capacity = 1
@@ -55,12 +52,8 @@ func Csem(name string, capacity int, ic int) *Sem {
   return s
 }
 
-// Close-----------------------------------------------------------------------
-<<<<<<< HEAD
-//         Close semaphore. This will release resources waiting for it
-=======
+// Close ----------------------------------------------------------------------
 // Closes a semaphore. This will release resources waiting for it
->>>>>>> 1ef29cbbc4cb55336c700fcf2b5a69b3ae322f1b
 // ----------------------------------------------------------------------------
 func (s *Sem) Close() {
   if s.valid {
@@ -70,7 +63,7 @@ func (s *Sem) Close() {
 }
 
 
-// Reset-----------------------------------------------------------------------
+// Reset ----------------------------------------------------------------------
 // resets the semaphore.
 // ----------------------------------------------------------------------------
 func (s *Sem) Reset() {
@@ -91,64 +84,45 @@ func _flushChannel(s *Sem) {
   }
 }
 
-<<<<<<< HEAD
-// Signal----------------------------------------------------------------------
-//         releases the semaphore. V & Signal as synonymous
-// ----------------------------------------------------------------------------
-=======
-// Signal-----------------------------------------------------------------------
+// Signal ----------------------------------------------------------------------
 // releases the semaphore. V & Signal as synonymous. Leave is the mutex equival
 // -----------------------------------------------------------------------------
->>>>>>> 1ef29cbbc4cb55336c700fcf2b5a69b3ae322f1b
+func (s *Sem) Signal() bool {
+  s.sch <- 1
+  return s.valid
+}
+
 func (s *Sem) V() bool {
   s.sch <- 1
   return s.valid
 }
 
-func (s *Sem) Signal() bool {
-  s.sch <- 1
-  return s.valid
-<<<<<<< HEAD
-}
 
-func (m *Mutex) Leave() bool {
-    m.s.sch <- 1
-  return m.s.valid
-=======
->>>>>>> 1ef29cbbc4cb55336c700fcf2b5a69b3ae322f1b
-}
-
-
-// Wait------------------------------------------------------------------------
+// Wait -----------------------------------------------------------------------
 // acquires the semaphore. P & Wait are synonymous. Enter is the mutex equival
 // ----------------------------------------------------------------------------
-func (s *Sem) P() bool {
-  <- s.sch
-  return s.valid
-}
-
 func (s *Sem) Wait() bool {
   <- s.sch
   return s.valid
 }
 
-<<<<<<< HEAD
-func (m *Mutex) Enter() bool {
-   <- m.s.sch
-  return m.s.valid
-=======
+func (s *Sem) P() bool {
+  <- s.sch
+  return s.valid
+}
 
-// Cmutex----------------------------------------------------------------------
+
+// Createmutex ----------------------------------------------------------------
 // creates a mutex. A mutex is a semaphore with capacity and initial count = 1
 // ----------------------------------------------------------------------------
-func Cmutex(name string) *Mutex {
+func Createmutex(name string) *Mutex {
   m := &Mutex{
-    s: Csem(name, 1, 1),
+    s: Createsem(name, 1, 1),
   }  
   return m
 }
 
-// Enter-----------------------------------------------------------------------
+// Enter ----------------------------------------------------------------------
 // enters a critical section. Equivalent to P or Wait
 //-----------------------------------------------------------------------------
 func (m *Mutex) Enter() bool {
@@ -156,7 +130,7 @@ func (m *Mutex) Enter() bool {
   return m.s.valid
 }
 
-// Leave-----------------------------------------------------------------------
+// Leave ----------------------------------------------------------------------
 // leaves a critical section. Equivalent to V or Signal
 //-----------------------------------------------------------------------------
 func (m *Mutex) Leave() bool {
@@ -164,7 +138,7 @@ func (m *Mutex) Leave() bool {
   return m.s.valid
 }
 
-// Close-----------------------------------------------------------------------
+// Close ----------------------------------------------------------------------
 // Closes a mutex. This will release resources waiting for it
 // ----------------------------------------------------------------------------
 func (m *Mutex) Close() {
@@ -172,14 +146,15 @@ func (m *Mutex) Close() {
     m.s.valid = false
     close(m.s.sch)
   }
->>>>>>> 1ef29cbbc4cb55336c700fcf2b5a69b3ae322f1b
 }
 
 
-// Reset-----------------------------------------------------------------------
+// Reset ----------------------------------------------------------------------
 // resets a mutex.
 // ----------------------------------------------------------------------------
 func (m *Mutex) Reset() {
   _flushChannel(m.s)
   m.s.sch <- 1
 }
+
+//
