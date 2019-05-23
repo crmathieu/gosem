@@ -142,16 +142,16 @@ var mymutex *semaphore.Mutex
 
 To create a semaphore with a capacity of 64, and an initial count of 0:
 ```go
-sem1 = sem.Createsem("mySemaphore-1", 64, 0)
+mysem := sem.Createsem("mySemaphore-1", 64, 0)
 ```
 -or- to create a semaphore with a capacity of 64, and an initial count of 64:
 ```go
-sem2 = sem.Createsem("mySemaphore-2", 64, 64)
+mysem := sem.Createsem("mySemaphore-2", 64, 64)
 ```
 
 #### Createmutex: creates a mutex  
 ```go
-mutex = sem.Createmutex("myMutex")
+mymutex := sem.Createmutex("myMutex")
 ```
 
 Following a semaphore creation, there are a certain number of methods available to manipulate semaphores:
@@ -161,7 +161,7 @@ Following a semaphore creation, there are a certain number of methods available 
 mysem.Reset()
 ```
 -or-
-```
+```go
 mymutex.Reset()
 ```
 
@@ -172,7 +172,7 @@ This will flush the semaphore internal channel and resets its counter to its ori
 mysem.Signal()
 ```
 -or-
-```
+```go
 mysem.V()
 ```
 -or- for a mutex
@@ -186,7 +186,7 @@ mymutex.Leave()
 mysem.Wait()
 ```
 -or-
-```
+```go
 mysem.P()
 ```
 -or- for a mutex
