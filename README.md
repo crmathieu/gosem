@@ -66,7 +66,7 @@ func consumer() {
 }
 ```
 
-In its loop, the **consumer** first makes sure there is something to read from the buffer by calling _readsem.Wait()_. This call will return immediately if data is available but will block if the buffer is empty. In the latter case, the call will return only after the **producer** goroutine writes an entry to the buffer and performs a _readsem.Signal()_ call to indicate that one entry is now available for reading.
+In its loop, the **consumer** first makes sure there is something to read from the buffer by calling _readsem.Wait()_. This call will return immediately if data is available but will block if the buffer is empty. In the latter case, the call will return only after the **producer** goroutine writes an entry to the buffer and performs a _readsem.Signal()_ call to indicate that one entry is ready to be consumed.
 
 Similarly, once a value has been read from the buffer, the **consumer** calls _writesem.Signal()_ to indicate that space is available for production.
 
