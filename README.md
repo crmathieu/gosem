@@ -49,9 +49,9 @@ func producer() {
   }
 }
 ```
-In its producing loop, the producer first makes sure there is space in the buffer by calling writesem.Wait(). This call will return immediately if space is available but will block if the buffer is full. In the latter case, the call will return only after a consumer goroutine reads an entry from the buffer and performs a writesem.Signal() call to signify that one entry is now available.
+In its loop, the **producer** first makes sure there is available space in the buffer by calling _writesem.Wait()_. This call will return immediately if space is available but will block if the buffer is full. In the latter case, the call will return only after the **consumer** goroutine reads an entry from the buffer and performs a _writesem.Signal()_ call to signify that one entry is now available.
 
-Similarly, once a value was written in the buffer, the producer calls readsem.Signal() to indicate to the consumer that a value is available for consumption.
+Similarly, once a value was written in the buffer, the **producer** calls _readsem.Signal()_ to indicate to the consumer that a value is available for consumption.
 
 The code of the consumer looks like that:
 
@@ -66,9 +66,9 @@ func consumer() {
 }
 ```
 
-In its consuming loop, the consumer first makes sure there is something to read from the buffer by calling readsem.Wait(). This call will return immediately if data is available but will block if the buffer is empty. In the latter case, the call will return only after a producer goroutine writes an entry to the buffer and performs a readsem.Signal() call to signify that one entry is now available for reading.
+In its loop, the **consumer** first makes sure there is something to read from the buffer by calling _readsem.Wait()_. This call will return immediately if data is available but will block if the buffer is empty. In the latter case, the call will return only after the **producer** goroutine writes an entry to the buffer and performs a _readsem.Signal()_ call to indicate that one entry is now available for reading.
 
-Similarly, once a value has been read from the buffer, the consumer calls writesem.Signal() to indicate to the producer that there is space available.
+Similarly, once a value has been read from the buffer, the **consumer** calls _writesem.Signal()_ to indicate to the producer that there is space available.
 
 
 ## Multiple consumers and producers
@@ -79,7 +79,7 @@ In order to do that, goroutines will need to have an exclusive access to these i
 ```go
 mutex = sem.Createmutex("mymutex")
 ```
-We are going to need a mutex to protect the <b>head</b> index and another mutex to protect the <b>tail</b> index:
+We are going to need a mutex to protect the <b>head</b> index used by multiple producers and another mutex to protect the <b>tail</b> index used by multiple consumers:
 
 ```go
 headmutex = sem.Createmutex("head-mutex")
@@ -119,9 +119,13 @@ func consumer() {
 ```
 ### Variable declaration
 To declare a semaphore or a mutex:
+```go
 var mysem *semaphore.Sem
+```
 -or-
+```go
 var mymutex *semaphore.Mutex
+```
 
 ### Semaphore API
 
@@ -154,9 +158,9 @@ Following a semaphore creation, there are a certain number of methods available 
 #### Reset
 ```go
 mysem.Reset()
-
+```
 -or-
-
+```
 mymutex.Reset()
 ```
 
@@ -165,13 +169,12 @@ This will flush the semaphore internal channel and resets its counter to its ori
 #### Signal -or- V (-or- Leave)
 ```go
 mysem.Signal()
-
+```
 -or-
-
+```
 mysem.V()
 ```
 -or- for a mutex
-
 ```go
 mymutex.Leave()
 ```
@@ -180,14 +183,12 @@ mymutex.Leave()
 #### Wait -or- P (-or- Enter)
 ```go
 mysem.Wait()
-
+```
 -or-
-
+```
 mysem.P()
 ```
-
 -or- for a mutex
-
 ```go
 mymutex.Enter()
 ```
