@@ -1,20 +1,20 @@
 package queue
 
 import (
-  "github.com/crmathieu/gosem/semaphore"
+  sem "github.com/crmathieu/gosem/semaphore"
 )
 
 type subQueue struct {
   Queue []int
   Head, Tail, Instance, Size int
-  SemW *semaphore.Sem
-  SemR *semaphore.Sem
+  SemW *sem.Sem
+  SemR *sem.Sem
 }
 
 type QU struct {
   consmap map[int]*subQueue
   cinstance int
-  qmutex *semaphore.Mutex
+  qmutex *sem.Mutex
   size   int
 }
 
@@ -33,7 +33,7 @@ func InitQueue(size int) *QU {
   return &QU{
     consmap : make(map[int]*subQueue),
     cinstance : 0,
-    qmutex : semaphore.Cmutex("queueMutex"),
+    qmutex : sem.Createmutex("queueMutex"),
     size: size,
   }
 }
@@ -51,8 +51,8 @@ func (q *QU) Subscribe() *subQueue {
     Instance: q.cinstance,
     Head: 0,
     Tail: 0,
-    SemW: semaphore.Csem("fanbufW", q.size, q.size),
-    SemR: semaphore.Csem("fanbufR", q.size, 0)}
+    SemW: sem.Createsem("fanbufW", q.size, q.size),
+    SemR: sem.Createsem("fanbufR", q.size, 0)}
   q.consmap[q.cinstance] = &sq
   q.cinstance++
   q.Leave()
@@ -95,4 +95,3 @@ func (q *QU) Fanout(item int) {
   }
 }
 
-//

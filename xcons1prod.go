@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"sync"
 	"time"
-	"github.com/crmathieu/gosem/semaphore"
+	sem "github.com/crmathieu/gosem/semaphore"
 )
 
-var items, spaces *semaphore.Sem
-var cmutex *semaphore.Mutex
+var items, spaces *sem.Sem
+var cmutex *sem.Mutex
 
 const BUFFER_SIZE = 32
 var buffer [BUFFER_SIZE]int
@@ -18,9 +18,9 @@ var wg sync.WaitGroup
 // main------------------------------------------------------------------------
 func main() {
 
-	cmutex = semaphore.Cmutex("consumermutex")
-	items = semaphore.Csem("usedcount", BUFFER_SIZE, 0)
-	spaces = semaphore.Csem("availablecount", BUFFER_SIZE, BUFFER_SIZE)
+	cmutex = sem.Createmutex("consumermutex")
+	items = sem.Createsem("usedcount", BUFFER_SIZE, 0)
+	spaces = sem.Createsem("availablecount", BUFFER_SIZE, BUFFER_SIZE)
 
 	go producer()
 	go consumer("A")

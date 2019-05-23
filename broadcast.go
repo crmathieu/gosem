@@ -10,12 +10,12 @@ import (
 	"fmt"
 	"sync"
 	"time"
-	"github.com/crmathieu/gosem/semaphore"
+	sem "github.com/crmathieu/gosem/semaphore"
 	"github.com/crmathieu/gosem/queue"
 )
 
-var items, spaces *semaphore.Sem
-var qmutex, pmutex, cmutex *semaphore.Mutex
+var items, spaces *sem.Sem
+var qmutex, pmutex, cmutex *sem.Mutex
 
 const BUFFER_SIZE = 8192
 var buffer [BUFFER_SIZE]int
@@ -26,10 +26,10 @@ var qu *queue.QU
 // main------------------------------------------------------------------------
 func main() {
 
-	pmutex = semaphore.Cmutex("producermutex")
-	cmutex = semaphore.Cmutex("consumermutex")
-	items = semaphore.Csem("usedcount", BUFFER_SIZE, 0)
-	spaces = semaphore.Csem("availablecount", BUFFER_SIZE, BUFFER_SIZE)
+	pmutex = sem.Createmutex("producermutex")
+	cmutex = sem.Createmutex("consumermutex")
+	items = sem.Createsem("usedcount", BUFFER_SIZE, 0)
+	spaces = sem.Createsem("availablecount", BUFFER_SIZE, BUFFER_SIZE)
 
 	go broadcaster()
 
