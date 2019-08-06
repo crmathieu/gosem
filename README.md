@@ -42,7 +42,7 @@ func producer() {
   for {
     writesem.Wait()
     buffer[head] = i
-    i++
+    i = (i + 1) % 4096
     head = (head+1) % 512
     readsem.Signal()
   }
@@ -61,6 +61,7 @@ func consumer() {
     item = buffer[tail]
     tail = (tail+1) % 512
     writesem.Signal()
+    fmt.Println(item)
   }
 }
 ```
@@ -94,7 +95,7 @@ func producer() {
     writesem.Wait()
     headmutex.Enter()
     buffer[head] = i
-    i++
+    i = (i + 1) % 4096    
     head = (head+1) % 512
     headmutex.Leave()
     readsem.Signal()
@@ -113,6 +114,7 @@ func consumer() {
     tail = (tail+1) % 512
     tailmutex.Leave()
     writesem.Signal()
+    fmt.Println(item)
   }
 }
 ```
