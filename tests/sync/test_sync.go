@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	s := sync.NewSync(5)
+	s := sync.NewSync()
 
 	for i:=0; i<5; i++ {
 		go func(a int) {

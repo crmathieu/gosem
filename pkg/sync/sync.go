@@ -5,8 +5,6 @@ import (
 	"fmt"
 )
 
-const MAXTHREADS = 100
-
 type Sync struct {
 	syncmutex *sem.Mutex
 	csync   chan int
@@ -14,10 +12,7 @@ type Sync struct {
 	in_use 	bool  
 }
 
-func NewSync(maxthreads int) *Sync {
-	if maxthreads <= 0 || maxthreads > MAXTHREADS {
-		maxthreads = MAXTHREADS
-	}
+func NewSync() *Sync {
 	return &Sync{sem.Createmutex("sync-mutex"), make(chan int, 1), 0, false}
 }
 
