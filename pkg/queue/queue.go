@@ -1,7 +1,7 @@
 package queue
 
 import (
-  sem "github.com/crmathieu/gosem/semaphore"
+  sem "github.com/crmathieu/gosem/pkg/semaphore"
 )
 
 type subQueue struct {
