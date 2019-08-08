@@ -28,14 +28,15 @@ func (s *Sync)Add() {
 func (s *Sync)Done() {
 	s.syncmutex.Enter()
 	if s.in_use == false || s.cnt < 1 {
-		fmt.Println("Invalid Done op")
+		fmt.Println("Invalid Done op. Make sure Each call to 'Done' has its corresponding call to 'Add'")
 		return
 	}
-	if s.cnt == 1 {
+	s.cnt--
+	left := s.cnt
+	s.syncmutex.Leave()
+	if left == 0 {
 		s.csync <- 1
 	} 
-	s.cnt--
-	s.syncmutex.Leave()
 }
 
 func (s *Sync)Wait() {
