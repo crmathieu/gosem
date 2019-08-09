@@ -125,7 +125,7 @@ First, import the gosem package:
 
 ```go
 import (
-  sem "github.com/crmathieu/gosem/semaphore"
+  sem "github.com/crmathieu/gosem/pkg/semaphore"
 )
 ```
 
