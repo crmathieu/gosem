@@ -7,7 +7,7 @@ In the context of Golang, a semaphore will be represented as a data structure us
 ### Using gosem in your project
 ```go
 import (
-  sem "github.com/crmathieu/gosem/semaphore"
+  sem "github.com/crmathieu/gosem/pkg/semaphore"
 )
 ```
 
