@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"sync"
 	"time"
-	sem "github.com/crmathieu/gosem/semaphore"
-	"github.com/crmathieu/gosem/queue"
+	sem "github.com/crmathieu/gosem/pkg/semaphore"
+	"github.com/crmathieu/gosem/pkg/queue"
 )
 
 var items, spaces *sem.Sem

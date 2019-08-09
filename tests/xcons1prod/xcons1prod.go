@@ -1,10 +1,11 @@
 package main
 
+// testing synchronization of multiple consumers and 1 producer on a shared resource
 import (
 	"fmt"
 	"sync"
 	"time"
-	sem "github.com/crmathieu/gosem/semaphore"
+	sem "github.com/crmathieu/gosem/pkg/semaphore"
 )
 
 var items, spaces *sem.Sem
