@@ -1,8 +1,9 @@
 package semaphore
 
+type semch struct{}
 type Sem struct {
   name string
-  sch chan int
+  sch chan semch //int
   ic int
   valid bool
 }
@@ -42,12 +43,12 @@ func Createsem(name string, capacity int, ic int) *Sem {
   }
 
   s := &Sem{name: name, 
-            sch: make(chan int, capacity), 
+            sch: make(chan semch, capacity), 
             ic: ic, 
             valid: true,
           }
   for i := 0; i < ic; i++ {
-    s.sch <- 1
+    s.sch <- semch{}
   }
   return s
 }
@@ -69,7 +70,7 @@ func (s *Sem) Close() {
 func (s *Sem) Reset() {
   _flushChannel(s)
   for i := 0; i < s.ic; i++ {
-    s.sch <- 1
+    s.sch <- semch{} //1
   }
 }
 
@@ -88,12 +89,12 @@ func _flushChannel(s *Sem) {
 // releases the semaphore. V & Signal as synonymous. Leave is the mutex equival
 // -----------------------------------------------------------------------------
 func (s *Sem) Signal() bool {
-  s.sch <- 1
+  s.sch <- semch{} //1
   return s.valid
 }
 
 func (s *Sem) V() bool {
-  s.sch <- 1
+  s.sch <- semch{} //1
   return s.valid
 }
 
@@ -134,7 +135,7 @@ func (m *Mutex) Enter() bool {
 // leaves a critical section. Equivalent to V or Signal
 //-----------------------------------------------------------------------------
 func (m *Mutex) Leave() bool {
-    m.s.sch <- 1
+    m.s.sch <- semch{} //1
   return m.s.valid
 }
 
@@ -154,7 +155,7 @@ func (m *Mutex) Close() {
 // ----------------------------------------------------------------------------
 func (m *Mutex) Reset() {
   _flushChannel(m.s)
-  m.s.sch <- 1
+  m.s.sch <- semch{} //1
 }
 
 //

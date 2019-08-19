@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 	sem "github.com/crmathieu/gosem/pkg/semaphore"
+	//"github.com/crmathieu/gosem/pkg/sync"
 )
 
 var items, spaces *sem.Sem
@@ -16,9 +17,11 @@ var buffer [BUFFER_SIZE]int
 var head, tail = 0, 0
 var wg sync.WaitGroup
 
+//var wg = sync.NewSync()
+
 // main------------------------------------------------------------------------
 func main() {
-
+	
 	cmutex = sem.Createmutex("consumermutex")
 	items = sem.Createsem("usedcount", BUFFER_SIZE, 0)
 	spaces = sem.Createsem("availablecount", BUFFER_SIZE, BUFFER_SIZE)
